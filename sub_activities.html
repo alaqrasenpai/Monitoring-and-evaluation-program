@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>النشاطات الفرعية</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">نظام متابعة وتقييم</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="strategy_plan.html">الخطة الاستراتيجية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="strategic_goals.html">الأهداف الاستراتيجية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="results.html">النتائج</a></li>
+                    <li class="nav-item"><a class="nav-link" href="indicators.html">المؤشرات</a></li>
+                    <li class="nav-item"><a class="nav-link" href="targets.html">الاستهدافات</a></li>
+                    <li class="nav-item"><a class="nav-link" href="exec_plan.html">الخطة التنفيذية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="sub_goals.html">الأهداف الفرعية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="outputs.html">المخرجات</a></li>
+                    <li class="nav-item"><a class="nav-link" href="main_activities.html">الأنشطة الرئيسية</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="sub_activities.html">النشاطات الفرعية</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div id="app" class="container mt-4">
+        <h2>النشاطات الفرعية</h2>
+        <form @submit.prevent="addSubActivity">
+            <div class="mb-3">
+                <label for="subActivityName" class="form-label">اسم النشاط الفرعي</label>
+                <input type="text" class="form-control" v-model="newSubActivity.name" placeholder="أدخل اسم النشاط الفرعي" required>
+            </div>
+            <div class="mb-3">
+                <label for="mainActivitySelect" class="form-label">النشاط الرئيسي المرتبط</label>
+                <select class="form-select" v-model="newSubActivity.mainActivity" required>
+                    <option v-for="activity in mainActivities" :key="activity.name">{{ activity.name }}</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="employees" class="form-label">الموظفون المسؤولون</label>
+                <select class="form-select" v-model="newSubActivity.employees" multiple>
+                    <option v-for="employee in employees" :key="employee">{{ employee }}</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="initialValue" class="form-label">القيمة عند بداية النشاط</label>
+                <input type="number" class="form-control" v-model="newSubActivity.initialValue">
+            </div>
+            <div class="mb-3">
+                <label for="endValue" class="form-label">القيمة عند نهاية النشاط</label>
+                <input type="number" class="form-control" v-model="newSubActivity.endValue">
+            </div>
+            <div class="mb-3">
+                <label for="status" class="form-label">حالة النشاط</label>
+                <select class="form-select" v-model="newSubActivity.status" required>
+                    <option>منجز</option>
+                    <option>قيد العمل</option>
+                    <option>معلق</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">إضافة النشاط الفرعي</button>
+        </form>
+        
+        <hr>
+        <h3>قائمة النشاطات الفرعية</h3>
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">اسم النشاط الفرعي</th>
+                    <th scope="col">النشاط الرئيسي المرتبط</th>
+                    <th scope="col">الموظفون المسؤولون</th>
+                    <th scope="col">حالة النشاط</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(subActivity, index) in subActivities" :key="index">
+                    <th scope="row">{{ index + 1 }}</th>
+                    <td>{{ subActivity.name }}</td>
+                    <td>{{ subActivity.mainActivity }}</td>
+                    <td>{{ subActivity.employees.join(', ') }}</td>
+                    <td>{{ subActivity.status }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                newSubActivity: {
+                    name: '',
+                    mainActivity: '',
+                    employees: [],
+                    initialValue: '',
+                    endValue: '',
+                    status: ''
+                },
+                subActivities: JSON.parse(localStorage.getItem('subActivities')) || [],
+                mainActivities: JSON.parse(localStorage.getItem('mainActivities')) || [],
+                employees: [
+                    "أحمد الأقرع",
+                    "إياد قلالوة",
+                    "أمجد فارس"
+                ]
+            },
+            methods: {
+                addSubActivity() {
+                    if (this.newSubActivity.name && this.newSubActivity.mainActivity && this.newSubActivity.status) {
+                        this.subActivities.push({ ...this.newSubActivity });
+                        localStorage.setItem('subActivities', JSON.stringify(this.subActivities));
+                        this.newSubActivity = { name: '', mainActivity: '', employees: [], initialValue: '', endValue: '', status: '' };
+                    }
+                }
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

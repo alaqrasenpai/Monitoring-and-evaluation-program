@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأنشطة الرئيسية</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">نظام متابعة وتقييم</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="strategy_plan.html">الخطة الاستراتيجية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="strategic_goals.html">الأهداف الاستراتيجية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="results.html">النتائج</a></li>
+                    <li class="nav-item"><a class="nav-link" href="indicators.html">المؤشرات</a></li>
+                    <li class="nav-item"><a class="nav-link" href="targets.html">الاستهدافات</a></li>
+                    <li class="nav-item"><a class="nav-link" href="exec_plan.html">الخطة التنفيذية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="sub_goals.html">الأهداف الفرعية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="outputs.html">المخرجات</a></li>
+                    <li class="nav-item active"><a class="nav-link active" href="main_activities.html">الأنشطة الرئيسية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="sub_activities.html">النشاطات الفرعية</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div id="app" class="container mt-4">
+        <h2>الأنشطة الرئيسية</h2>
+        <form @submit.prevent="addMainActivity">
+            <div class="mb-3">
+                <label for="activityName" class="form-label">اسم النشاط</label>
+                <input type="text" class="form-control" v-model="newMainActivity.name" placeholder="أدخل اسم النشاط" required>
+            </div>
+            <div class="mb-3">
+                <label for="outputSelect" class="form-label">المخرج المرتبط</label>
+                <select class="form-select" v-model="newMainActivity.output" required>
+                    <option v-for="output in outputs" :key="output.name">{{ output.name }}</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="responsibleUnit" class="form-label">الدائرة المسؤولة</label>
+                <select class="form-select" v-model="newMainActivity.responsibleUnit" required>
+                    <option v-for="unit in units" :key="unit">{{ unit }}</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="partnerUnits" class="form-label">الدوائر الشريكة</label>
+                <select class="form-select" v-model="newMainActivity.partnerUnits" multiple>
+                    <option v-for="unit in units" :key="unit">{{ unit }}</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="initialValue" class="form-label">القيمة عند بداية النشاط</label>
+                <input type="number" class="form-control" v-model="newMainActivity.initialValue">
+            </div>
+            <div class="mb-3">
+                <label for="completionValue" class="form-label">القيمة عند إتمام النشاط</label>
+                <input type="number" class="form-control" v-model="newMainActivity.completionValue">
+            </div>
+            <div class="mb-3">
+                <label for="startDate" class="form-label">تاريخ بداية النشاط</label>
+                <input type="date" class="form-control" v-model="newMainActivity.startDate">
+            </div>
+            <div class="mb-3">
+                <label for="endDate" class="form-label">تاريخ نهاية النشاط</label>
+                <input type="date" class="form-control" v-model="newMainActivity.endDate">
+            </div>
+            <div class="mb-3">
+                <label for="activityStatus" class="form-label">حالة النشاط</label>
+                <select class="form-select" v-model="newMainActivity.status" required>
+                    <option>منجز</option>
+                    <option>معلق</option>
+                    <option>قيد العمل</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">إضافة النشاط الرئيسي</button>
+        </form>
+        
+        <hr>
+        <h3>قائمة الأنشطة الرئيسية</h3>
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">اسم النشاط</th>
+                    <th scope="col">المخرج المرتبط</th>
+                    <th scope="col">الدائرة المسؤولة</th>
+                    <th scope="col">الدوائر الشريكة</th>
+                    <th scope="col">القيمة عند البداية</th>
+                    <th scope="col">القيمة عند الإتمام</th>
+                    <th scope="col">تاريخ البداية</th>
+                    <th scope="col">تاريخ النهاية</th>
+                    <th scope="col">الحالة</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(activity, index) in mainActivities" :key="index">
+                    <th scope="row">{{ index + 1 }}</th>
+                    <td>{{ activity.name }}</td>
+                    <td>{{ activity.output }}</td>
+                    <td>{{ activity.responsibleUnit }}</td>
+                    <td>{{ activity.partnerUnits.join(', ') }}</td>
+                    <td>{{ activity.initialValue }}</td>
+                    <td>{{ activity.completionValue }}</td>
+                    <td>{{ activity.startDate }}</td>
+                    <td>{{ activity.endDate }}</td>
+                    <td>{{ activity.status }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                newMainActivity: {
+                    name: '',
+                    output: '',
+                    responsibleUnit: '',
+                    partnerUnits: [],
+                    initialValue: '',
+                    completionValue: '',
+                    startDate: '',
+                    endDate: '',
+                    status: ''
+                },
+                mainActivities: JSON.parse(localStorage.getItem('mainActivities')) || [],
+                outputs: JSON.parse(localStorage.getItem('outputs')) || [],
+                units: JSON.parse(localStorage.getItem('units')) || [
+                    "وحدة التخطيط",
+                    "وحدة تكنولوجيا المعلومات",
+                    "وحدة الشؤون الإدارية"
+                ]
+            },
+            methods: {
+                addMainActivity() {
+                    if (this.newMainActivity.name && this.newMainActivity.output && this.newMainActivity.responsibleUnit) {
+                        this.mainActivities.push({ ...this.newMainActivity });
+                        localStorage.setItem('mainActivities', JSON.stringify(this.mainActivities));
+                        this.newMainActivity = { 
+                            name: '', 
+                            output: '', 
+                            responsibleUnit: '', 
+                            partnerUnits: [], 
+                            initialValue: '', 
+                            completionValue: '', 
+                            startDate: '', 
+                            endDate: '', 
+                            status: '' 
+                        };
+                    }
+                }
+            },
+            mounted() {
+                if (!localStorage.getItem('units')) {
+                    localStorage.setItem('units', JSON.stringify(this.units));
+                }
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

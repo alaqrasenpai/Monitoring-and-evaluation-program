@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الخطة التنفيذية</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">نظام متابعة وتقييم</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="strategy_plan.html">الخطة الاستراتيجية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="strategic_goals.html">الأهداف الاستراتيجية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="results.html">النتائج</a></li>
+                    <li class="nav-item"><a class="nav-link" href="indicators.html">المؤشرات</a></li>
+                    <li class="nav-item"><a class="nav-link" href="targets.html">الاستهدافات</a></li>
+                    <li class="nav-item active"><a class="nav-link active" href="exec_plan.html">الخطة التنفيذية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="sub_goals.html">الأهداف الفرعية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="outputs.html">المخرجات</a></li>
+                    <li class="nav-item"><a class="nav-link" href="main_activities.html">الأنشطة الرئيسية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="sub_activities.html">النشاطات الفرعية</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="app" class="container mt-4">
+        <h2>الخطة التنفيذية</h2>
+        <form @submit.prevent="addExecPlan">
+            <div class="mb-3">
+                <label for="planName" class="form-label">اسم الخطة التنفيذية</label>
+                <input type="text" class="form-control" v-model="newExecPlan.name" placeholder="أدخل اسم الخطة" required>
+            </div>
+            <div class="mb-3">
+                <label for="unitSelect" class="form-label">الوحدة المسؤولة</label>
+                <select class="form-select" v-model="newExecPlan.unit" required>
+                    <option v-for="unit in units" :key="unit">{{ unit }}</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="partnersSelect" class="form-label">الشركاء الداخليين</label>
+                <select class="form-select" v-model="newExecPlan.partners" multiple>
+                    <option v-for="unit in units" :key="unit">{{ unit }}</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="startDate" class="form-label">تاريخ بداية الخطة</label>
+                <input type="date" class="form-control" v-model="newExecPlan.startDate">
+            </div>
+            <div class="mb-3">
+                <label for="endDate" class="form-label">تاريخ نهاية الخطة</label>
+                <input type="date" class="form-control" v-model="newExecPlan.endDate">
+            </div>
+            <div class="mb-3">
+                <label for="strategicGoalsSelect" class="form-label">الأهداف الاستراتيجية المرتبطة</label>
+                <select class="form-select" v-model="newExecPlan.goals" multiple>
+                    <option v-for="goal in goals" :key="goal.name">{{ goal.name }}</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">إضافة الخطة التنفيذية</button>
+        </form>
+        <hr>
+        <h3>قائمة الخطط التنفيذية</h3>
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">اسم الخطة</th>
+                    <th scope="col">الوحدة</th>
+                    <th scope="col">الأهداف الاستراتيجية المرتبطة</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(execPlan, index) in execPlans" :key="index">
+                    <th scope="row">{{ index + 1 }}</th>
+                    <td>{{ execPlan.name }}</td>
+                    <td>{{ execPlan.unit }}</td>
+                    <td>{{ execPlan.goals.join(', ') }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                newExecPlan: {
+                    name: '',
+                    unit: '',
+                    partners: [],
+                    startDate: '',
+                    endDate: '',
+                    goals: []
+                },
+                execPlans: JSON.parse(localStorage.getItem('execPlans')) || [],
+                units: JSON.parse(localStorage.getItem('units')) || [
+                    "وحدة التخطيط",
+                    "وحدة تكنولوجيا المعلومات",
+                    "وحدة الشؤون الإدارية"
+                ],
+                goals: JSON.parse(localStorage.getItem('strategicGoals')) || []
+            },
+            methods: {
+                addExecPlan() {
+                    if (this.newExecPlan.name && this.newExecPlan.unit) {
+                        this.execPlans.push({ ...this.newExecPlan });
+                        localStorage.setItem('execPlans', JSON.stringify(this.execPlans));
+                        this.newExecPlan = { name: '', unit: '', partners: [], startDate: '', endDate: '', goals: [] };
+                    }
+                }
+            },
+            mounted() {
+                // حفظ الوحدات الافتراضية في localStorage إذا لم تكن موجودة
+                if (!localStorage.getItem('units')) {
+                    localStorage.setItem('units', JSON.stringify(this.units));
+                }
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

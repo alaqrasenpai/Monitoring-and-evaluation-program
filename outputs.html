@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المخرجات</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">نظام متابعة وتقييم</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="strategy_plan.html">الخطة الاستراتيجية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="strategic_goals.html">الأهداف الاستراتيجية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="results.html">النتائج</a></li>
+                    <li class="nav-item "><a class="nav-link" href="indicators.html">المؤشرات</a></li>
+                    <li class="nav-item"><a class="nav-link" href="targets.html">الاستهدافات</a></li>
+                    <li class="nav-item"><a class="nav-link" href="exec_plan.html">الخطة التنفيذية</a></li>
+                    <li class="nav-item"><a class="nav-link" href="sub_goals.html">الأهداف الفرعية</a></li>
+                    <li class="nav-item active"><a class="nav-link active" href="outputs.html">المخرجات</a></li>
+                    <li class="nav-item "><a class="nav-link " href="main_activities.html">الأنشطة الرئيسية</a></li>
+                    <li class="nav-item "><a class="nav-link " href="sub_activities.html">النشاطات الفرعية</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="app" class="container mt-4">
+        <h2>المخرجات</h2>
+        <form @submit.prevent="addOutput">
+            <div class="mb-3">
+                <label for="outputName" class="form-label">اسم المخرج</label>
+                <input type="text" class="form-control" v-model="newOutput.name" placeholder="أدخل اسم المخرج" required>
+            </div>
+            <div class="mb-3">
+                <label for="subGoalSelect" class="form-label">الهدف الفرعي المرتبط</label>
+                <select class="form-select" v-model="newOutput.subGoal" required>
+                    <option v-for="subGoal in subGoals" :key="subGoal.name">{{ subGoal.name }}</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="initialValue" class="form-label">القيمة الابتدائية</label>
+                <input type="number" class="form-control" v-model="newOutput.initialValue">
+            </div>
+            <div class="mb-3">
+                <label for="expectedValue" class="form-label">القيمة المتوقعة</label>
+                <input type="number" class="form-control" v-model="newOutput.expectedValue">
+            </div>
+            <div class="mb-3">
+                <label for="currentValue" class="form-label">القيمة الحالية</label>
+                <input type="number" class="form-control" v-model="newOutput.currentValue">
+            </div>
+            <button type="submit" class="btn btn-primary">إضافة المخرج</button>
+        </form>
+        <hr>
+        <h3>قائمة المخرجات</h3>
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">اسم المخرج</th>
+                    <th scope="col">الهدف الفرعي المرتبط</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(output, index) in outputs" :key="index">
+                    <th scope="row">{{ index + 1 }}</th>
+                    <td>{{ output.name }}</td>
+                    <td>{{ output.subGoal }}</td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                newOutput: {
+                    name: '',
+                    subGoal: '',
+                    initialValue: '',
+                    expectedValue: '',
+                    currentValue: ''
+                },
+                outputs: JSON.parse(localStorage.getItem('outputs')) || [],
+                subGoals: JSON.parse(localStorage.getItem('subGoals')) || []
+            },
+            methods: {
+                addOutput() {
+                    if (this.newOutput.name && this.newOutput.subGoal) {
+                        this.outputs.push({ ...this.newOutput });
+                        localStorage.setItem('outputs', JSON.stringify(this.outputs));
+                        this.newOutput = { name: '', subGoal: '', initialValue: '', expectedValue: '', currentValue: '' };
+                    }
+                }
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
